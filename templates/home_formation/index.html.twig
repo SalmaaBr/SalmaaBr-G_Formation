@@ -1,0 +1,75 @@
+{% extends 'home/index.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-5 text-center text-dark display-4 font-weight-bold">Liste des Formations</h1> <!-- Titre plus grand et moderne -->
+
+    {% if formations is not empty %}
+        <div class="row">
+            {% for formation in formations %}
+                <div class="col-md-4 mb-4"> <!-- Chaque colonne prend un tiers de la largeur -->
+                    <div class="card shadow-lg h-100 border-0 rounded-10 overflow-hidden transition-transform transform hover:scale-102 hover:shadow-xl" style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                        <!-- Affichage de l'image de la formation -->
+                        {% if formation.image %}
+                            <img src="{{ asset('uploads/' ~ formation.image) }}" class="card-img-top" alt="{{ formation.nom }}" style="object-fit: cover; height: 220px; width: 100%; transition: transform 0.3s ease;">
+                        {% else %}
+                            <img src="{{ asset('images/formation_placeholder.jpg') }}" class="card-img-top" alt="Formation" style="object-fit: cover; height: 220px; width: 100%; transition: transform 0.3s ease;">
+                        {% endif %}
+                        <div class="card-body p-4">
+                            <h5 class="card-title text-dark font-weight-bold">{{ formation.nom }}</h5>
+                            <p class="card-text text-muted" style="font-size: 1rem; line-height: 1.4;">
+                                {{ formation.description|slice(0, 100) ~ '...' }} <!-- Limiter la description à 100 caractères -->
+                            </p>
+                            <ul class="list-unstyled text-muted mb-3" style="font-size: 0.9rem;">
+                                <li><i class="bi bi-geo-alt-fill"></i> {{ formation.lieu ?? 'Non spécifié' }}</li>
+                                <li><i class="bi bi-calendar-event"></i> Du {{ formation.dateDebut|date('d-m-Y') }} au {{ formation.dateFin|date('d-m-Y') }}</li>
+                                <li><i class="bi bi-cash"></i> {{ formation.cout }} dt</li>
+                            </ul>
+                            <!-- Bouton Participer avec effet de transition -->
+                            <a href="{{ path('app_participer_formation', { id: formation.id }) }}" class="btn btn-primary btn-block mt-3 rounded-pill shadow-sm" style="transition: background-color 0.3s ease, transform 0.2s ease;">
+                                Participer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center">
+            Aucune formation disponible.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        /* Effet de zoom sur l'image au survol */
+        .card-img-top {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Effet d'agrandissement de toute la carte au survol */
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Lorsqu'on survole la carte, l'ensemble de la carte (image + contenu) s'agrandit */
+        .card:hover {
+            transform: scale(2); /* Agrandissement de la carte entière */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Ombre portée pour effet de profondeur */
+        }
+
+        /* Changement de couleur et effet sur le bouton */
+        .btn-primary:hover {
+            background-color: #0056b3; /* Changement de couleur du bouton */
+            transform: translateY(-2px); /* Légère élévation du bouton */
+        }
+
+        /* Effet de zoom pour l'image */
+        .card-img-top:hover {
+            transform: scale(2); /* Agrandissement léger de l'image */
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'dash/index.html.twig' %}
+
+{% block title %}Ajouter un Type de Formation{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white text-center">
+            <h1 class="text-white">Ajouter un Type de Formation</h1>
+        </div>
+        <div class="card-body">
+            {# Formulaire d'ajout de type de formation #}
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                <div class="form-group">
+                    {{ form_label(form.libelle, 'Libellé du Type de Formation', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.libelle, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le libellé'}}) }}
+                    {{ form_errors(form.libelle) }}
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary px-4">Ajouter</button>
+                    <a href="{{ path('app_afficherformation') }}" class="btn btn-secondary px-4">Retour à la liste</a>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

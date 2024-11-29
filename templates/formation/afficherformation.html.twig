@@ -1,0 +1,160 @@
+{% extends 'dash/index.html.twig' %}
+
+{% block title %}Liste des Formations{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <style>
+        /* Styles pour les messages flash */
+        .custom-alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .custom-alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .custom-alert-error i {
+            margin-right: 10px;
+            color: #721c24;
+        }
+
+        .custom-alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .custom-alert-success i {
+            margin-right: 10px;
+            color: #155724;
+        }
+    </style>
+
+    <!-- Affichage des messages flash -->
+    {% for label, messages in app.flashes %}
+        <div class="custom-alert custom-alert-{{ label }}">
+            {% if label == 'error' %}
+                <i class="fas fa-exclamation-triangle"></i>
+            {% elseif label == 'success' %}
+                <i class="fas fa-check-circle"></i>
+            {% endif %}
+            {{ messages|first }}
+        </div>
+    {% endfor %}
+
+    <!-- Contenu principal -->
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="title-5 text-center mb-4">Liste des Formations</h3>
+
+            <!-- TABLE FORMATIONS -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom</th>
+                                    <th>Description</th>
+                                    <th>Lieu</th>
+                                    <th>Date de Début</th>
+                                    <th>Date de Fin</th>
+                                    <th>Formateur</th>
+                                    <th>Coût</th>
+                                    <th>Type</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for formation in formations %}
+                                    <tr>
+                                        <td>{{ formation.id }}</td>
+                                        <td>{{ formation.nom }}</td>
+                                        <td>{{ formation.description }}</td>
+                                        <td>{{ formation.lieu }}</td>
+                                        <td>{{ formation.dateDebut|date('d-m-Y') }}</td>
+                                        <td>{{ formation.dateFin|date('d-m-Y') }}</td>
+                                        <td>{{ formation.formateur }}</td>
+                                        <td>{{ formation.cout }} dt</td>
+                                        <td>{{ formation.typeformation ? formation.typeformation.libelle : 'Non spécifié' }}</td>
+                                        <td>
+                                            <a href="{{ path('app_editerformation', { nom: formation.nom }) }}" class="btn btn-sm btn-info text-white">
+                                                <i class="zmdi zmdi-edit"></i> Modifier
+                                            </a>
+                                            <a href="{{ path('formation_delete', { nom: formation.nom }) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette formation ?');">
+                                                <i class="zmdi zmdi-delete"></i> Supprimer
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="10" class="text-center">Aucune formation disponible.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOUTON AJOUTER FORMATION -->
+            <div class="text-start mb-5">
+                <a href="{{ path('formation_new') }}" class="btn btn-primary">
+                    <i class="zmdi zmdi-plus"></i> Ajouter une formation
+                </a>
+            </div>
+
+            <!-- TABLE TYPES DE FORMATION -->
+            <h3 class="text-center mb-4">Liste des Types de Formation</h3>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Libellé</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for typeFormation in typeFormations %}
+                                    <tr>
+                                        <td>{{ typeFormation.id }}</td>
+                                        <td>{{ typeFormation.libelle }}</td>
+                                        <td>
+                                            <a href="{{ path('app_typeformation_modifier', { id: typeFormation.id }) }}" class="btn btn-sm btn-info text-white">
+                                                <i class="zmdi zmdi-edit"></i> Modifier
+                                            </a>
+                                            <a href="{{ path('app_typeformation_supprimer', { id: typeFormation.id }) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce type de formation ?');">
+                                                <i class="zmdi zmdi-delete"></i> Supprimer
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">Aucun type de formation disponible.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <a href="{{ path('app_typeformation_ajouter') }}" class="btn btn-primary mt-3"><i class="zmdi zmdi-plus"></i> Ajouter un nouveau Type</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

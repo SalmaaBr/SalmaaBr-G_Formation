@@ -1,0 +1,29 @@
+{% extends 'dash/index.html.twig' %}
+
+{% block title %}Modifier Type de Formation{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white text-center">
+            <h1 class="text-white">Modifier Type de Formation</h1>
+        </div>
+        <div class="card-body">
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+            
+            <div class="form-group">
+                {{ form_label(form.libelle, 'Libellé', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.libelle, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.libelle) }}
+            </div>
+            
+            <div class="text-center mt-4">
+                <button class="btn btn-success px-4">Modifier</button>
+                <a href="{{ path('app_afficherformation') }}" class="btn btn-secondary px-4">Retour</a>
+            </div>
+            
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
