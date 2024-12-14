@@ -6,6 +6,7 @@
 parameters:
     # Define the upload directory path relative to your project directory
     uploads_directory: '%kernel.project_dir%/public/uploads'  # This will use the "public/uploads" directory
+    profile_pictures_directory: '%kernel.project_dir%/public/uploads/profile_pictures'
 
 services:
     # default configuration for services in *this* file
@@ -24,3 +25,8 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+        # Configuration specific to the FormationRepository service
+    App\Repository\FormationRepository:
+        arguments:
+            $uploadsDirectory: '%uploads_directory%'  # Injects the uploads directory parameter

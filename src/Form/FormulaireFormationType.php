@@ -10,6 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class FormulaireFormationType extends AbstractType
 {
@@ -21,9 +22,11 @@ class FormulaireFormationType extends AbstractType
             ->add('lieu')
             ->add('date_debut', null, [
                 'widget' => 'single_text',
+                'input' => 'datetime',
             ])
             ->add('date_fin', null, [
                 'widget' => 'single_text',
+                'input' => 'datetime',
             ])
             ->add('cout')
             ->add('formateur')
@@ -50,6 +53,11 @@ class FormulaireFormationType extends AbstractType
                         'mimeTypesMessage' => 'Veuillez uploader une image valide (JPEG, PNG, GIF).',
                     ]),
                 ],
+            ])
+
+            ->add('places', IntegerType::class, [
+                'label' => 'Nombre de places disponibles',
+                'attr' => ['min' => 0],
             ])
         ;
     }

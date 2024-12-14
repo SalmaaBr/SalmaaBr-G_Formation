@@ -2,11 +2,19 @@
 
 
 namespace App\Controller;
-
+use App\Entity\Inscription;
+use App\Entity\Formation;
+use App\Entity\User;
 use App\Repository\FormationRepository;
+use App\Repository\InscriptionRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+
 
 class HomeFormationController extends AbstractController
 {
@@ -21,25 +29,73 @@ class HomeFormationController extends AbstractController
         ]);
     }
     
-          // Exemple de contrôleur pour gérer l'inscription à une formation
-    #[Route('/formation/participer/{id}', name: 'app_participer_formation')]
-    public function participer(int $id, FormationRepository $formationRepository): Response
-    {
-        // Récupération de la formation par son ID
-        $formation = $formationRepository->find($id);
+    #[Route('/formation/participer/{id}', name: 'app_participer_formation', methods: ['GET'])]
+    public function participer(
+        int $id,
+        EntityManagerInterface $entityManager,
+        MailerInterface $mailer
+    ): Response {
+        // Récupère la formation par son ID
+        $formation = $entityManager->getRepository(Formation::class)->find($id);
     
+        // Si la formation n'existe pas, afficher un message d'erreur
         if (!$formation) {
-            throw $this->createNotFoundException('Formation non trouvée.');
+            $this->addFlash('danger', 'Formation introuvable.');
+            return $this->redirectToRoute('app_home_formation');
         }
-
-        // Logique pour gérer la participation (ex. ajouter un utilisateur à la formation)
-        // Par exemple, vous pouvez ajouter un utilisateur connecté à cette formation.
-
-        // Message de succès
-        $this->addFlash('success', 'Vous avez bien participé à la formation ' . $formation->getNom());
-
-        // Redirection vers une page de confirmation ou vers la liste des formations
+    
+        // Récupère l'utilisateur connecté
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('warning', 'Vous devez être connecté pour participer.');
+            return $this->redirectToRoute('app_login');
+        }
+    
+        // Vérifie si l'utilisateur est déjà inscrit à cette formation
+        $existingInscription = $entityManager->getRepository(Inscription::class)
+            ->findOneBy([
+                'userId' => $user->getId(),
+                'formationNom' => $formation->getNom(),
+            ]);
+    
+        if ($existingInscription) {
+            $this->addFlash('warning', 'Vous êtes déjà inscrit à cette formation.');
+            return $this->redirectToRoute('app_home_formation');
+        }
+    
+        // Vérifie si la formation a des places disponibles
+        if ($formation->getPlaces() <= 0) {
+            $this->addFlash('warning', 'Il n\'y a plus de places disponibles pour cette formation.');
+            return $this->redirectToRoute('app_home_formation');
+        }
+    
+        // Crée une nouvelle inscription
+        $inscription = new Inscription();
+        $inscription->setUserId($user->getId());
+        $inscription->setUserNom($user->getNom());
+        $inscription->setUserAdresse($user->getEmail());
+        $inscription->setUserNumero($user->getPhone());
+        $inscription->setFormationNom($formation->getNom());
+        $inscription->setDateInscription(new \DateTime());
+    
+        // Enregistre l'inscription dans la base de données
+        $entityManager->persist($inscription);
+        $entityManager->flush();
+    
+        // Décrémente le nombre de places disponibles
+        $formation->setPlaces($formation->getPlaces() - 1);
+        $entityManager->flush(); // Sauvegarde le changement du nombre de places
+    
+    
+        // Affiche un message de succès à l'utilisateur
+        $this->addFlash('success', 'Vous êtes inscrit à la formation "' . $formation->getNom() . '".');
+    
+        // Redirige l'utilisateur vers la page des formations
         return $this->redirectToRoute('app_home_formation');
     }
+
+    
+    
+
 }
 
