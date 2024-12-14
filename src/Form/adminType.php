@@ -14,6 +14,10 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class adminType extends AbstractType
 {
@@ -99,20 +103,18 @@ class adminType extends AbstractType
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Mot de passe',
-                'required' => false, // Mot de passe optionnel
-                'mapped' => false, // Ne lie pas ce champ directement à l'entité User
                 'attr' => [
-                    'placeholder' => 'Laissez vide si vous ne souhaitez pas modifier votre mot de passe',
-                    'class' => 'form-control input-blue',
+                    'placeholder' => 'Entrez un mot de passe sécurisé',
                 ],
                 'constraints' => [
-                    new Assert\Length([
+                    new NotBlank(['message' => 'Le mot de passe ne peut pas être vide.']),
+                    new Length([
                         'min' => 8,
                         'max' => 20,
-                        'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères.',
-                        'maxMessage' => 'Le mot de passe ne peut pas dépasser {{ limit }} caractères.',
+                        'minMessage' => 'Le mot de passe doit contenir au moins 8 caractères.',
+                        'maxMessage' => 'Le mot de passe ne peut pas dépasser 20 caractères.',
                     ]),
-                    new Assert\Regex([
+                    new Regex([
                         'pattern' => '/^[a-zA-Z\d]+$/',
                         'message' => 'Le mot de passe doit contenir uniquement des lettres et des chiffres.',
                     ]),
