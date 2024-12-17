@@ -256,12 +256,14 @@
                                     <td>{{ formation.places }}</td>
                                     <td>{{ formation.typeformation.libelle|default('Non spécifié') }}</td>
                                     <td>
-                                        <a href="{{ path('app_editerformation', { nom: formation.nom }) }}" class="btn btn-sm btn-info text-white">
+                                        <div style="display: flex; gap: 10px;">
+                                        <a href="{{ path('app_editerformation', { nom: formation.nom }) }}" class="btn btn-sm btn-info text-white ">
                                             <i class="zmdi zmdi-edit"></i> Modifier
                                         </a>
                                         <a href="{{ path('formation_delete', { nom: formation.nom }) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette formation ?');">
                                             <i class="zmdi zmdi-delete"></i> Supprimer
                                         </a>
+                                        </div>
                                     </td>
                                 </tr>
                             {% else %}
