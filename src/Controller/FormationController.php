@@ -122,16 +122,22 @@ public function edit(string $nom, Request $request, FormationRepository $formati
     {
         $searchTerm = $request->query->get('search', ''); // Terme de recherche général
         $userNom = $request->query->get('userNom', '');   // Recherche par nom précis
+        $userId = $request->query->get('userId', '');
+        
     
         $inscriptions = [];
-    
         // Priorité à la recherche par 'userNom' si disponible
-        if (!empty($userNom)) {
+        if (!empty($userId)) {
+            $inscriptions = $entityManager->getRepository(Inscription::class)->findBy(['userId' => $userId]);
+        }
+        // Priorité à la recherche par 'userNom' si disponible
+        elseif (!empty($userNom)) {
             $inscriptions = $entityManager->getRepository(Inscription::class)->findBy(['userNom' => $userNom]);
-        } elseif (!empty($searchTerm)) {
+        } 
+        elseif (!empty($searchTerm)) {
             // Sinon, effectuer la recherche générale sur 'searchTerm'
             $inscriptions = $entityManager->getRepository(Inscription::class)->createQueryBuilder('i')
-                ->where('i.userNom LIKE :search OR i.userAdresse LIKE :search')
+                ->where('i.userNom LIKE :search OR i.userAdresse LIKE :search OR i.userId LIKE :search')
                 ->setParameter('search', '%' . $searchTerm . '%')
                 ->getQuery()
                 ->getResult();
@@ -142,6 +148,7 @@ public function edit(string $nom, Request $request, FormationRepository $formati
             'inscriptions' => $inscriptions, // Liste des utilisateurs trouvés
             'searchTerm' => $searchTerm,     // Pré-remplissage du champ de recherche
             'userNom' => $userNom,           // Nom spécifique si filtré par 'userNom'
+            'userId' => $userId,
         ]);
     }
 
