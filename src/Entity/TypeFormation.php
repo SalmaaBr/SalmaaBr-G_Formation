@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Entity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\TypeFormationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,6 +18,7 @@ class TypeFormation
 
     #[ORM\Column(length: 255)]
     #[Assert\Choice(choices: ['enligne', 'présentielle'], message: 'Le libellé doit être "enligne" ou "présentielle".')]
+    #[Assert\NotBlank(message: "Le libellé ne peut pas être vide.")]
     private ?string $libelle = null;
 
     /**

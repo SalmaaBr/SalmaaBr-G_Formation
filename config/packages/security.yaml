@@ -32,7 +32,7 @@ security:
 
     # Contrôle des accès aux routes
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/utilisateur, roles: ROLE_ADMIN }
      
         # Empêche l'accès à /profile si l'utilisateur n'a pas le rôle ROLE_USER ou est banni
         - { path: ^/profile, roles: ROLE_USER, allow_if: "not user.getBanned()" }
